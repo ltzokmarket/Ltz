@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ltzokmarket — Подписки и сервисы для iPhone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: #0e1420;
+      --surface2: #141c2e;
+      --accent: #3b82f6;
+      --accent2: #06b6d4;
+      --accent3: #8b5cf6;
+      --text: #e8edf5;
+      --muted: #7a8499;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      width: 12px; height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease, background 0.2s;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1.5px solid rgba(59,130,246,0.5);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      transition: transform 0.35s ease;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Grid noise overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Glow blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.18;
+    }
+    .blob-1 { width: 500px; height: 500px; background: var(--accent); top: -150px; right: -100px; }
+    .blob-2 { width: 400px; height: 400px; background: var(--accent3); bottom: 100px; left: -150px; }
+    .blob-3 { width: 300px; height: 300px; background: var(--accent2); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 48px;
+      background: rgba(8,11,16,0.7);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .logo span { color: var(--muted); -webkit-text-fill-color: var(--muted); font-weight: 400; }
+    nav ul { list-style: none; display: flex; gap: 36px; }
+    nav ul a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    nav ul a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent);
+      color: #fff !important;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-weight: 600 !important;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+    .nav-cta:hover { background: #2563eb !important; transform: translateY(-1px); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative; z-index: 1;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.25);
+      color: var(--accent2);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .badge::before { content: '●'; font-size: 0.5rem; color: #22c55e; }
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      margin-bottom: 24px;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+    h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 44px;
+      font-weight: 300;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+    .hero-btns {
+      display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 14px 28px;
+      border-radius: 10px;
+      transition: all 0.25s;
+      box-shadow: 0 0 30px rgba(59,130,246,0.35);
+    }
+    .btn-primary:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 0 50px rgba(59,130,246,0.5); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+      padding: 14px 28px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      transition: all 0.25s;
+    }
+    .btn-secondary:hover { background: var(--surface2); border-color: rgba(255,255,255,0.15); }
+
+    /* STATS */
+    .stats {
+      display: flex; gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 72px;
+      animation: fadeUp 0.7s 0.4s ease both;
+      max-width: 600px;
+      width: 100%;
+    }
+    .stat {
+      flex: 1;
+      padding: 24px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+      background: rgba(14,20,32,0.6);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+    /* SECTION */
+    section { position: relative; z-index: 1; padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+    .section-sub { color: var(--muted); font-size: 1rem; line-height: 1.7; max-width: 500px; font-weight: 300; }
+
+    /* SERVICES */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 56px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--card-accent, var(--accent)), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card:hover { transform: translateY(-6px); border-color: rgba(255,255,255,0.12); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .card:hover::before { opacity: 1; }
+    .card-icon {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 24px;
+      background: var(--card-bg, rgba(59,130,246,0.1));
+      border: 1px solid var(--card-border, rgba(59,130,246,0.2));
+    }
+    .card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    .card p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; font-weight: 300; margin-bottom: 24px; }
+    .card-features { list-style: none; margin-bottom: 28px; display: flex; flex-direction: column; gap: 8px; }
+    .card-features li {
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-features li::before { content: '✓'; color: #22c55e; font-weight: 700; font-size: 0.75rem; }
+    .card-price {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .card-price span { font-size: 0.8rem; font-weight: 400; color: var(--muted); font-family: 'DM Sans', sans-serif; }
+    .card-btn {
+      display: block; width: 100%;
+      text-align: center;
+      text-decoration: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: var(--card-btn-bg, rgba(59,130,246,0.15));
+      color: var(--card-btn-color, var(--accent));
+      border: 1px solid var(--card-btn-border, rgba(59,130,246,0.3));
+      transition: all 0.2s;
+    }
+    .card-btn:hover { filter: brightness(1.2); transform: translateY(-1px); }
+
+    /* FaceApp card */
+    .card-faceapp { --card-accent: #f472b6; --card-bg: rgba(244,114,182,0.08); --card-border: rgba(244,114,182,0.15); --card-btn-bg: rgba(244,114,182,0.1); --card-btn-color: #f472b6; --card-btn-border: rgba(244,114,182,0.25); }
+    /* PayPal card */
+    .card-paypal { --card-accent: #06b6d4; --card-bg: rgba(6,182,212,0.08); --card-border: rgba(6,182,212,0.15); --card-btn-bg: rgba(6,182,212,0.1); --card-btn-color: #06b6d4; --card-btn-border: rgba(6,182,212,0.25); }
+    /* VPN card */
+    .card-vpn { --card-accent: #8b5cf6; --card-bg: rgba(139,92,246,0.08); --card-border: rgba(139,92,246,0.15); --card-btn-bg: rgba(139,92,246,0.1); --card-btn-color: #8b5cf6; --card-btn-border: rgba(139,92,246,0.25); }
+
+    /* HOW IT WORKS */
+    .how-section { background: var(--surface); border-radius: 24px; padding: 64px; border: 1px solid var(--border); margin: 0 24px; max-width: 1100px; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-top: 48px; }
+    .step { position: relative; }
+    .step-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      color: rgba(59,130,246,0.15);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .step h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; }
+    .step p { color: var(--muted); font-size: 0.88rem; line-height: 1.65; font-weight: 300; }
+
+    /* FAQ */
+    .faq { max-width: 700px; margin: 56px auto 0; }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 24px 0;
+    }
+    .faq-q {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 16px;
+      user-select: none;
+    }
+    .faq-q::after {
+      content: '+';
+      font-size: 1.4rem;
+      color: var(--accent);
+      transition: transform 0.3s;
+      flex-shrink: 0;
+    }
+    .faq-item.open .faq-q::after { transform: rotate(45deg); }
+    .faq-a {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      font-weight: 300;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.3s;
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding-top: 14px; }
+
+    /* CTA BANNER */
+    .cta-banner {
+      margin: 0 24px;
+      max-width: 1100px;
+      background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(139,92,246,0.15));
+      border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 24px;
+      padding: 72px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-banner::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, rgba(59,130,246,0.08), transparent 70%);
+    }
+    .cta-banner h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .cta-banner p { color: var(--muted); font-size: 1rem; margin-bottom: 36px; font-weight: 300; position: relative; }
+    .tg-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #229ED9;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: 16px 36px;
+      border-radius: 12px;
+      position: relative;
+      transition: all 0.25s;
+      box-shadow: 0 0 40px rgba(34,158,217,0.35);
+    }
+    .tg-btn:hover { background: #1a8fc0; transform: translateY(-2px); box-shadow: 0 0 60px rgba(34,158,217,0.5); }
+    .tg-btn svg { width: 22px; height: 22px; }
+
+    /* FOOTER */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    footer .logo { font-size: 1.1rem; }
+    footer p { color: var(--muted); font-size: 0.82rem; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .reveal {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      nav ul { display: none; }
+      .how-section { padding: 40px 24px; margin: 0 16px; }
+      .cta-banner { padding: 48px 24px; margin: 0 16px; }
+      footer { padding: 32px 20px; flex-direction: column; text-align: center; }
+      .stats { flex-direction: column; }
+      .stat { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat:last-child { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">ltzok<span>market</span></div>
+    <ul>
+      <li><a href="#services">Услуги</a></li>
+      <li><a href="#how">Как работает</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="https://t.me/YOUR_USERNAME" class="nav-cta">Написать в Telegram</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="badge">Работаем официально · Быстро · Надёжно</div>
+    <h1>Подписки и сервисы<br>для <em>iPhone</em> — легко</h1>
+    <p class="hero-sub">FaceApp Pro, PayPal и лучшие VPN-сервисы. Оформляем быстро — вы получаете без лишних хлопот.</p>
+    <div class="hero-btns">
+      <a href="https://t.me/YOUR_USERNAME" class="btn-primary">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.281c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.94z"/></svg>
+        Написать в Telegram
+      </a>
+      <a href="#services" class="btn-secondary">Посмотреть услуги →</a>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">500+</div>
+        <div class="stat-label">Довольных клиентов</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">~15 мин</div>
+        <div class="stat-label">Среднее время оформления</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Топовых сервиса</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="section-label">Наши услуги</div>
+    <div class="section-title">Всё что нужно<br>для вашего iPhone</div>
+    <p class="section-sub">Оформляем подписки и сервисы быстро, без лишних шагов. Пишите — и всё готово.</p>
+    <div class="services-grid">
+
+      <!-- FaceApp -->
+      <div class="card card-faceapp reveal">
+        <div class="card-icon">🎨</div>
+        <h3>FaceApp Pro</h3>
+        <p>Полная версия FaceApp без ограничений — все фильтры, стили и функции разблокированы навсегда.</p>
+        <ul class="card-features">
+          <li>Все премиум-фильтры и стили</li>
+          <li>Без водяных знаков</li>
+          <li>Работает на iPhone</li>
+          <li>Быстрая активация</li>
+        </ul>
+        <div class="card-price">Уточнить цену <span>— напишите в Telegram</span></div>
+        <a href="https://t.me/ltzok" class="card-btn">Оформить FaceApp →</a>
+      </div>
+
+      <!-- PayPal -->
+      <div class="card card-paypal reveal">
+        <div class="card-icon">💳</div>
+        <h3>PayPal</h3>
+        <p>Помогаем с пополнением и решением вопросов PayPal. Быстро, безопасно, с поддержкой.</p>
+        <ul class="card-features">
+          <li>Пополнение баланса</li>
+          <li>Помощь с верификацией</li>
+          <li>Поддержка на всех этапах</li>
+          <li>Работаем с iPhone пользователями</li>
+        </ul>
+        <div class="card-price">Уточнить цену <span>— напишите в Telegram</span></div>
+        <a href="https://t.me/YOUR_USERNAME" class="card-btn">Оформить PayPal →</a>
+      </div>
+
+      <!-- VPN -->
+      <div class="card card-vpn reveal">
+        <div class="card-icon">🛡️</div>
+        <h3>VPN для iPhone</h3>
+        <p>Топовые VPN-сервисы для iOS. Защищённое соединение, обход блокировок, быстрые серверы по всему миру.</p>
+        <ul class="card-features">
+          <li>Совместимость с iOS/iPhone</li>
+          <li>Серверы в 50+ странах</li>
+          <li>Высокая скорость соединения</li>
+          <li>Конфиденциальность гарантирована</li>
+        </ul>
+        <div class="card-price">Уточнить цену <span>— напишите в Telegram</span></div>
+        <a href="https://t.me/YOUR_USERNAME" class="card-btn">Оформить VPN →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <div style="position:relative;z-index:1;padding:0 0 80px;max-width:1148px;margin:0 auto;">
+  <div class="how-section reveal" id="how">
+    <div class="section-label">Как это работает</div>
+    <div class="section-title">Три шага —<br>и готово</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4>Пишете в Telegram</h4>
+        <p>Выбираете нужный сервис и пишете нам. Отвечаем в течение нескольких минут.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4>Обсуждаем детали</h4>
+        <p>Уточняем параметры — тариф, срок, устройство. Называем финальную цену.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4>Получаете сервис</h4>
+        <p>Оплачиваете удобным способом и сразу получаете доступ. Всё работает!</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h4>Поддержка 24/7</h4>
+        <p>Остаёмся на связи — если вопросы, пишите в любое время.</p>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- FAQ -->
+  <section id="faq" style="text-align:center;">
+    <div class="section-label" style="text-align:center;">FAQ</div>
+    <div class="section-title" style="text-align:center;">Частые вопросы</div>
+    <div class="faq">
+      <div class="faq-item">
+        <div class="faq-q">Как быстро всё оформляется?</div>
+        <div class="faq-a">В большинстве случаев — в течение 15–30 минут после оплаты. Обычно ещё быстрее.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Как оплатить?</div>
+        <div class="faq-a">Уточняем удобный способ оплаты в Telegram. Работаем с разными вариантами.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">VPN подходит именно для iPhone?</div>
+        <div class="faq-a">Да, мы работаем только с iOS-совместимыми VPN-сервисами, всё настраивается нативно на iPhone.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Что если что-то не заработает?</div>
+        <div class="faq-a">Мы решим проблему. Пишите в Telegram — разберёмся вместе и убедимся, что всё работает.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Можно продлить уже существующую подписку?</div>
+        <div class="faq-a">Конечно! Пишите в Telegram — подскажем варианты продления для вашего сервиса.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div style="position:relative;z-index:1;padding:0 0 100px;max-width:1148px;margin:0 auto;">
+  <div class="cta-banner reveal">
+    <h2>Готовы начать? Напишите нам прямо сейчас</h2>
+    <p>Отвечаем быстро. Поможем выбрать лучший вариант под ваши задачи.</p>
+    <a href="https://t.me/YOUR_USERNAME" class="tg-btn">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-1.97 9.281c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.94z"/></svg>
+      Написать в Telegram
+    </a>
+  </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="logo">ltzok<span>market</span></div>
+    <p>© 2026 ltzokmarket. Все права защищены.</p>
+    <p style="color:var(--muted);font-size:0.8rem;">Работаем официально · iPhone · Быстро</p>
+  </footer>
+
+  <script>
+    // Cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.transform = `translate(${mx}px,${my}px) translate(-50%,-50%)`; });
+    function animRing() { rx += (mx - rx) * 0.12; ry += (my - ry) *.12; ring.style.transform = `translate(${rx}px,${ry}px) translate(-50%,-50%)`; requestAnimationFrame(animRing); }
+    animRing();
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.style.transform += ' scale(1.5)'; cursor.style.background = '#06b6d4'; });
+      el.addEventListener('mouseleave', () => { cursor.style.background = '#3b82f6'; });
+    });
+
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    reveals.forEach(r => obs.observe(r));
+
+    // FAQ
+    document.querySelectorAll('.faq-q').forEach(q => {
+      q.addEventListener('click', () => {
+        const item = q.parentElement;
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
+      });
+    });
+  </script>
+</body>
+</html>
