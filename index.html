@@ -435,6 +435,47 @@
     }
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
+    /* REVIEWS */
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      text-align: left;
+    }
+    .review-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .review-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.12); }
+    .review-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .avatar {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .review-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
+    .review-stars { color: #f59e0b; font-size: 0.85rem; letter-spacing: 2px; }
+    .review-text { color: var(--muted); font-size: 0.88rem; line-height: 1.7; font-weight: 300; margin-bottom: 16px; }
+    .review-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 4px 12px;
+      border-radius: 100px;
+      background: rgba(59,130,246,0.1);
+      color: var(--accent2);
+      border: 1px solid rgba(59,130,246,0.2);
+    }
+
     @media (max-width: 768px) {
       nav { padding: 16px 20px; }
       nav ul { display: none; }
@@ -604,6 +645,124 @@
         <div class="faq-q">Можно продлить уже существующую подписку?</div>
         <div class="faq-a">Конечно! Пишите в Telegram — подскажем варианты продления для вашего сервиса.</div>
       </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section id="reviews" style="text-align:center;">
+    <div class="section-label" style="text-align:center;">Отзывы</div>
+    <div class="section-title" style="text-align:center;">Что говорят клиенты</div>
+    <p class="section-sub" style="margin:0 auto 48px;">Реальные отзывы людей которые уже воспользовались нашими услугами</p>
+    <div class="reviews-grid">
+
+      <div class="review-card reveal">
+        <div class="review-header">
+          <div class="avatar" style="background:linear-gradient(135deg,#f472b6,#ec4899)">АД</div>
+          <div>
+            <div class="review-name">Алина Джаксыбекова</div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="review-text">Оформила FaceApp Pro за 10 минут! Всё чётко, без лишних вопросов. Буду рекомендовать подругам 🔥</p>
+        <div class="review-tag">FaceApp Pro</div>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-header">
+          <div class="avatar" style="background:linear-gradient(135deg,#06b6d4,#0284c7)">МК</div>
+          <div>
+            <div class="review-name">Максим Калинин</div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="review-text">VPN для айфона поставили быстро, всё работает отлично. Скорость не упала вообще, доволен на 100%</p>
+        <div class="review-tag">VPN для iPhone</div>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-header">
+          <div class="avatar" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">ДН</div>
+          <div>
+            <div class="review-name">Диана Нурланова</div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="review-text">Помогли с PayPal, думала будет долго но всё решили за 20 минут. Очень вежливо и профессионально!</p>
+        <div class="review-tag">PayPal</div>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-header">
+          <div class="avatar" style="background:linear-gradient(135deg,#f59e0b,#d97706)">РА</div>
+          <div>
+            <div class="review-name">Руслан Абдуллаев</div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="review-text">Уже второй раз беру VPN, первый раз попробовал — понравилось, теперь продлил. Всё быстро и без проблем 👍</p>
+        <div class="review-tag">VPN для iPhone</div>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-header">
+          <div class="avatar" style="background:linear-gradient(135deg,#22c55e,#16a34a)">СМ</div>
+          <div>
+            <div class="review-name">Сабина Маратова</div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="review-text">FaceApp Pro — огонь! Подруга посоветовала этот магазин, не пожалела. Цена норм, доставка мгновенная ✨</p>
+        <div class="review-tag">FaceApp Pro</div>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-header">
+          <div class="avatar" style="background:linear-gradient(135deg,#ef4444,#dc2626)">ИС</div>
+          <div>
+            <div class="review-name">Иван Степанов</div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="review-text">Долго искал где нормально помогут с PayPal, нашёл ltzokmarket — решили всё чётко. Рекомендую!</p>
+        <div class="review-tag">PayPal</div>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-header">
+          <div class="avatar" style="background:linear-gradient(135deg,#a78bfa,#8b5cf6)">АИ</div>
+          <div>
+            <div class="review-name">Айгерим Исламова</div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="review-text">Супер сервис! Написала в телеграм — ответили сразу, всё оформили быстро. Буду постоянным клиентом 💙</p>
+        <div class="review-tag">FaceApp Pro</div>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-header">
+          <div class="avatar" style="background:linear-gradient(135deg,#0ea5e9,#0284c7)">ТБ</div>
+          <div>
+            <div class="review-name">Тимур Бекжанов</div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="review-text">VPN летает, сайты все открываются. Очень доволен, цена адекватная. Спасибо ltzokmarket!</p>
+        <div class="review-tag">VPN для iPhone</div>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-header">
+          <div class="avatar" style="background:linear-gradient(135deg,#fb923c,#ea580c)">МВ</div>
+          <div>
+            <div class="review-name">Марина Волкова</div>
+            <div class="review-stars">★★★★★</div>
+          </div>
+        </div>
+        <p class="review-text">Помогли разобраться с PayPal, даже объяснили всё по шагам. Очень приятно работать с такими людьми!</p>
+        <div class="review-tag">PayPal</div>
+      </div>
+
     </div>
   </section>
 
